@@ -3,3 +3,5 @@ config
 package-lock.json
 .env
 config/config.json
+passport/kakaoStrategy.js
+passport/localStrategy.js
