@@ -15,6 +15,7 @@ const sequelize = new Sequelize(  // config에 있는 설정값들을 통해 시
 // DB에 config에서 가져온 설정값을 기반으로 시퀄라이즈 적용
 db.sequelize = sequelize;
 
+// 아래와 같이 직접 하나씩 구현도 가능
 // db.User = User;
 // db.Post = Post;
 // db.Hashtag = Hashtag;
@@ -26,6 +27,8 @@ db.sequelize = sequelize;
 // Post.associate(db);
 // Hashtag.associate(db);
 
+
+// 아래는 위와 동일한 실행을 하나 반복적인 내용을 자동화하기 위한 코드
 const basename = path.basename(__filename);
 fs.readdirSync(__dirname)
   .filter(file => {

@@ -5,3 +5,4 @@ package-lock.json
 config/config.json
 passport/kakaoStrategy.js
 passport/localStrategy.js
+uploads

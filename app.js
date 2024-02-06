@@ -11,12 +11,17 @@ const passport = require('passport');
 const { sequelize } = require('./models');
 
 dotenv.config();  // process.env
+
 const pageRouter = require('./routes/page');
 const authRouter = require('./routes/auth');
+const postRouter = require('./routes/post');
+const userRouter = require('./routes/user');
+
 const passportConfig = require('./passport');
 
 const app = express();
 passportConfig();
+
 app.set('port', process.env.PORT|| 8001);
 app.set('view engine', 'html');  //템플릿엔진으로 읽을 때 html 파일을 사용
 
@@ -38,6 +43,7 @@ sequelize.sync()
 
 app.use(morgan('dev'));  // 실행 로깅
 app.use(express.static(path.join(__dirname, 'public')));  // 프론트에서 public 폴더를 자유롭게 접근가능하게 허용
+app.use('/img', express.static(path.join(__dirname, 'uploads')));  // img경로를 통해서 프론트가 uploads 폴더에 접근가능하게 허용
 app.use(express.json());  // ajax json 요청 받을 수 있게 (req.body로 만들어서)
 app.use(express.urlencoded({ extended: false }));  // form 요청 받을 수 있게 (req.body로 만들어서)
 app.use(cookieParser(process.env.COOKIE_SECRET));  // 헤더에 있는 쿠키 데이터 파싱, { connect.sid: 123876128942 }와 같은 객체로 만듬
@@ -61,6 +67,8 @@ app.use(passport.session());  // connect.sid라는 이름으로 세션 쿠키가
 
 app.use('/', pageRouter);
 app.use('/auth', authRouter);
+app.use('/post', postRouter);
+app.use('/user', userRouter);
 
 // 404 미들웨어
 app.use((req, res, next) => {  // 404 NOT FOUND
