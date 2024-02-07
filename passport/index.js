@@ -20,18 +20,18 @@ module.exports = () => {
     passport.deserializeUser((id, done) => {  // 세션쿠키 값을 통해 얻은 유저 아이디를 가지고 User 정보를 복원시킴
         User.findOne({ 
             where: { id },
+            // as: 'Followers'와 as: 'Followings'는 User 모델이 Follow 테이블을 통해 
+            // 자기 자신과 맺고 있는 팔로우 관계를 나타내며, 이 관계를 통해 팔로워와 팔로잉 사용자의 정보를 함께 조회할 수 있음
             include: [
-                // 팔로잉
                 {
                     model: User,
                     attributes: ['id', 'nick'],
-                    as: 'Followers', // 나의 팔로잉은 팔로워 데이터들을 기반으로 찾기 때문에
+                    as: 'Followers',
                 },
-                //팔로워
                 {
                     model: User,
                     attributes: ['id', 'nick'],
-                    as: 'Followings', // 나의 팔로워는 팔로잉 데이터들을 기반으로 찾기 때문에
+                    as: 'Followings',
                 },
             ]
         })

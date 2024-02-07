@@ -16,6 +16,7 @@ exports.uploadPost = async (req, res, next) => {
             img: req.body.url,
             UserId: req.user.id,
         });
+        // 해시태그 정규표현식 사용
         const hashtags = req.body.content.match(/#[^\s#]*/g);
         if (hashtags) {
             // Post와 Hashtag 사이의 다대다 관계 생성
