@@ -9,6 +9,9 @@
   </head>
   <body>
     <div class="container">
+      <div class="nodebird-head">
+        <a id="nodebird-title" href="/"><img class="nodebird-logo" src="/그림1.png" alt="nodebird-logo"></a>
+      </div>
       <div class="profile-wrap">
         <div class="profile">
           {% if user and user.id %}
@@ -23,6 +26,7 @@
             </div>
           <input id="my-id" type="hidden" value="{{user.id}}">
           <a id="my-profile" href="/profile" class="btn">내 프로필</a>
+          <a id="my-profile-update" href="/profile/update" class="btn">프로필 수정</a>
           <a id="logout" href="/auth/logout" class="btn">로그아웃</a>
         {% else %}
           <form id="login-form" action="/auth/login" method="post">

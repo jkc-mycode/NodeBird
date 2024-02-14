@@ -2,11 +2,41 @@
 const Post = require('../models/post');
 const User = require('../models/user');
 const Hashtag = require('../models/hashtag');
+const bcrypt = require('bcrypt');
 
 exports.renderProfile = (req, res, next) => {
     // 서비스를 호출
     res.render('profile', { title: '내 정보 - NodeBird' });
 
+};
+
+exports.renderProfileUpdate = (req, res, next) => {
+    res.render('profile_update', { title: '프로필 수정 - NodeBird' })
+};
+
+exports.updateProfile = async (req, res, next) => {
+    const { nick, email, password } = req.body;  // 구조분해 할당에 의해 req.body에서 자동으로 할당됨
+    try {
+        // 사용자가 email도 변경했을 경우 DB에서 중복체크
+        if (req.user.email != email) {
+            const exUser = await User.findOne({ where: { email } });
+            if (exUser) {
+                return res.redirect('/profile/update?error=exist');
+            }
+        }
+        const hash = await bcrypt.hash(password, 12); // 비밀번호 암호화
+        await User.update({
+            email: email,
+            nick: nick,
+            password: hash,
+        }, {
+            where: { id: req.user.id }
+        });
+        return res.redirect('/');
+    } catch(err) {
+        console.log(err);
+        next(err);
+    }
 };
 
 exports.renderJoin = (req, res, next) => {
