@@ -30,6 +30,8 @@
             <input type="hidden" value="{{twit.User.id}}" class="twit-user-id">
             <input type="hidden" value="{{twit.id}}" class="twit-id">
             <div class="twit-author">{{twit.User.nick}}</div>
+            <button style="float:right;" class="twit-delete">삭제</button>
+            <button style="float:right; margin-right: 10px;" class="twit-update">수정</button>
             {% if not followingIdList.includes(twit.User.id) and twit.User.id !== user.id %}
               <button class="twit-follow">팔로우하기</button>
             {% elif twit.User.id !== user.id %}
@@ -47,6 +49,8 @@
 
 {% block script %}
   <script>
+    let isEditMode = false; // 수정 모드인지 아닌지를 판단하는 변수
+    let editingTwitId = null;
     if (document.getElementById('img')) {
       document.getElementById('img').addEventListener('change', function(e) {
         const formData = new FormData();
@@ -90,6 +94,78 @@
           if (userId !== myId.value) {
             if (confirm('팔로잉 취소하시겠습니까?')) {
               axios.post(`/user/${userId}/unfollow`)
+                .then(() => {
+                  location.reload();
+                })
+                .catch((err) => {
+                  console.error(err);
+                });
+            }
+          }
+        }
+      });
+    });
+
+    document.querySelectorAll('.twit-update').forEach(function(tag) {
+      tag.addEventListener('click', function(event) {
+        const myId = document.querySelector('#my-id');  // 로그인된 id
+        const twitContent = tag.parentNode.querySelector('.twit-content').textContent;
+        const twitImg = tag.parentNode.querySelector('.twit-img img');
+        const twitImgSrc= twitImg ? twitImg.src : '';
+
+        if (myId) {
+          const userId = tag.parentNode.querySelector('.twit-user-id').value;  // 작성자 id
+          if (userId === myId.value) {
+            document.getElementById('twit').value = twitContent;
+            document.getElementById('img-preview').src = twitImgSrc;
+            document.getElementById('img-url').value = twitImgSrc;
+
+            if (twitImgSrc) {
+              document.getElementById('img-preview').style.display = 'inline';
+            }
+          }
+        }
+        isEditMode = true; // 수정 모드로 변경
+        editingTwitId = tag.parentNode.querySelector('.twit-id').value;
+      });
+    });
+
+    document.getElementById('twit-btn').addEventListener('click', function(event) {
+      event.preventDefault();
+      const twitContent = document.getElementById('twit').value;
+      const twitImgSrc = document.getElementById('img-url').value;
+
+      if (isEditMode) {
+        // 수정 API 호출
+        axios.put(`/post/${editingTwitId}/update`, { content: twitContent, url: twitImgSrc, isEdit: isEditMode, postId: editingTwitId })
+          .then(() => {
+            location.reload();
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      } else {
+        // 새 트윗 생성 API 호출
+        axios.post('/post', { content: twitContent, url: twitImgSrc })
+          .then(() => {
+            location.reload();
+          })
+          .catch((err) => {
+            console.error(err);
+          });
+      }
+    });
+
+    document.querySelectorAll('.twit-delete').forEach(function(tag) {
+      tag.addEventListener('click', function(event) {
+        const myId = document.querySelector('#my-id');  // 로그인된 id
+        const twitId =  tag.parentNode.querySelector('.twit-id').value;
+
+        if (myId) {
+          const userId = tag.parentNode.querySelector('.twit-user-id').value;  // 작성자 id
+          if (userId === myId.value) {
+            if (confirm('정말로 게시물을 삭제하겠습니까?')) {
+              axios.delete(`/post/${twitId}/delete`)
                 .then(() => {
                   location.reload();
                 })

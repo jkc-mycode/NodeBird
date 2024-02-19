@@ -4,7 +4,7 @@ const { isLoggedIn, isNotLoggedIn } = require('../middlewares');
 const fs = require('fs');
 const multer = require('multer');
 const path = require('path');
-const { afterUploadImage, uploadPost } = require('../controllers/post');
+const { afterUploadImage, uploadPost, deletePost } = require('../controllers/post');
 
 try {
     fs.readdirSync('uploads');
@@ -29,10 +29,14 @@ const upload = multer({
 });
 
 // multer 사용 시 FormData객체에서 사용하는 formData.append('img', this.files[0])의 'img'변수와 동일하게 사용해야 함
-router.post('/img', isLoggedIn,upload.single('img'), afterUploadImage);
+router.post('/img', isLoggedIn, upload.single('img'), afterUploadImage);
 
 const upload2 = multer();  // 게시글을 올리기 위한 multer
 router.post('/', isLoggedIn, upload2.none(), uploadPost);
 
+router.put('/:id/update/img', isLoggedIn, upload.single('img'), afterUploadImage);
+router.put('/:id/update', isLoggedIn, upload2.none(), uploadPost);
+
+router.delete('/:id/delete', isLoggedIn, deletePost);
 
 module.exports = router;
