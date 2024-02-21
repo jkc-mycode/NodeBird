@@ -18,5 +18,14 @@
         {% endfor %}
       {% endif %}
     </div>
+    &nbsp;
+    <div class="like-list">
+      <h2>좋아요 목록</h2>
+      {% if user.LikedPosts %}
+        {% for content in LikedPostContentList %}
+          <div>{{content}}</div>
+        {% endfor %}
+      {% endif %}
+    </div>
   </div>
 {% endblock %}

@@ -2,6 +2,7 @@ const passport = require('passport');
 const local = require('./localStrategy');
 const kakao = require('./kakaoStrategy');
 const User = require('../models/user');
+const Post = require('../models/post');
 
 
 module.exports = () => {
@@ -32,6 +33,11 @@ module.exports = () => {
                     model: User,
                     attributes: ['id', 'nick'],
                     as: 'Followings',
+                },
+                {
+                    model: Post,
+                    attributes: ['id', 'content'],
+                    as: 'LikedPosts',
                 },
             ]
         })

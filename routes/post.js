@@ -4,7 +4,7 @@ const { isLoggedIn, isNotLoggedIn } = require('../middlewares');
 const fs = require('fs');
 const multer = require('multer');
 const path = require('path');
-const { afterUploadImage, uploadPost, deletePost } = require('../controllers/post');
+const { afterUploadImage, uploadPost, deletePost, likePost, unlikePost } = require('../controllers/post');
 
 try {
     fs.readdirSync('uploads');
@@ -38,5 +38,9 @@ router.put('/:id/update/img', isLoggedIn, upload.single('img'), afterUploadImage
 router.put('/:id/update', isLoggedIn, upload2.none(), uploadPost);
 
 router.delete('/:id/delete', isLoggedIn, deletePost);
+
+router.post('/:id/like', isLoggedIn, likePost);
+
+router.post('/:id/unlike', isLoggedIn, unlikePost);
 
 module.exports = router;

@@ -47,15 +47,23 @@ exports.renderJoin = (req, res, next) => {
 exports.renderMain = async (req, res, next) => {
     try {
         const posts = await Post.findAll({
-            include: {
+            include: [
+            {
                 model: User,
                 attributes: ['id', 'nick'],
             },
+            {
+                model: User,
+                attributes: ['id', 'nick'],
+                as: 'Likers',
+            }],
             order: [['createdAt', 'DESC']]
         });
+        console.log(posts.map(v => v.Likers.map(v => v.id)));
         res.render('main', { 
             title: 'NodeBird',
             twits: posts,
+            likes: posts.map((v) => v.Likers.map((v) => v.id)),
         });
     } catch (error) {
         console.error(error);
