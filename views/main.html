@@ -29,7 +29,7 @@
           <div class="twit">
             <input type="hidden" value="{{twit.User.id}}" class="twit-user-id">
             <input type="hidden" value="{{twit.id}}" class="twit-id">
-            <div class="twit-author">{{twit.User.nick}}</div>
+            <a href="/user/{{twit.User.id}}"><button class="twit-author">{{twit.User.nick}}</button></a>
             {% if user and twit.User.id == user.id %}
               <button style="float:right;" class="twit-delete">삭제</button>
               <button style="float:right; margin-right: 10px;" class="twit-update">수정</button>
@@ -46,12 +46,14 @@
             {% if twit.img %}
               <div class="twit-img"><img src="{{twit.img}}" alt="섬네일"></div>
             {% endif %}
-            
-            {% if user and not likes[twits.indexOf(twit)].includes(user.id) %}
+            {% if user %}
+            {% if not likes[twits.indexOf(twit)].includes(user.id) %}
               <button class="twit-like">좋아요</button>
             {% else %}
             <button class="twit-unlike">좋아요 취소</button>
             {% endif %}
+            {% endif %}
+            
           </div>
         {% endfor %}
       </div>
@@ -227,5 +229,18 @@
         }
       });
     });
+
+    // document.querySelectorAll('.twit-author').forEach(function(tag) {
+    //   tag.addEventListener('click', function() {
+    //     const twitUserId = tag.parentNode.querySelector('.twit-user-id').value;
+    //     axios.get(`/user/${twitUserId}`)
+    //       .then(() => {
+    //         location.reload();
+    //       })
+    //       .catch((err) => {
+    //         console.error(err);
+    //       });
+    //   });
+    // });
   </script>
 {% endblock %}

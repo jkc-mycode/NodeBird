@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { renderJoin, renderMain, renderProfile, renderHashtag, renderProfileUpdate, updateProfile } = require('../controllers/page');
+const { renderJoin, renderMain, renderProfile, renderHashtag, renderProfileUpdate, updateProfile, searchUserPost } = require('../controllers/page');
 const { isLoggedIn, isNotLoggedIn } = require('../middlewares');
 
 // 공통적으로 사용하기 원하는 변수들을 res.locals로 설정
@@ -21,5 +21,7 @@ router.post('/profile/update_process', isLoggedIn, updateProfile);
 router.get('/join', isNotLoggedIn, renderJoin);
 router.get('/', renderMain);
 router.get('/hashtag', renderHashtag);  // hashtag?hashtag=node
+
+router.get('/user/:id', searchUserPost);
 
 module.exports = router;

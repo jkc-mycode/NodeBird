@@ -48,15 +48,15 @@ exports.renderMain = async (req, res, next) => {
     try {
         const posts = await Post.findAll({
             include: [
-            {
-                model: User,
-                attributes: ['id', 'nick'],
-            },
-            {
-                model: User,
-                attributes: ['id', 'nick'],
-                as: 'Likers',
-            }],
+                {
+                    model: User,
+                    attributes: ['id', 'nick'],
+                },
+                {
+                    model: User,
+                    attributes: ['id', 'nick'],
+                    as: 'Likers',
+                }],
             order: [['createdAt', 'DESC']]
         });
         console.log(posts.map(v => v.Likers.map(v => v.id)));
@@ -82,13 +82,53 @@ exports.renderHashtag = async (req, res, next) => {
         let posts = [];
         if (hashtag) {
             posts = await hashtag.getPosts({
-                include: [{ model: User, attributes: ['id', 'nick'] }],
+                include: [
+                    {
+                        model: User,
+                        attributes: ['id', 'nick'],
+                    },
+                    {
+                        model: User,
+                        attributes: ['id', 'nick'],
+                        as: 'Likers',
+                    }],
                 order: [['createdAt', 'DESC']]
             });
         }
         res.render('main', {
             title: `${query} | NodeBird`,
             twits: posts,
+            likes: posts.map((v) => v.Likers.map((v) => v.id)),
+        });
+    } catch (error) {
+        console.error(error);
+        next(error);
+    }
+};
+
+exports.searchUserPost = async (req, res, next) => {
+    try {
+        console.log(req.params.id);
+        const user = await User.findOne({ where: { id: req.params.id } });
+        const posts = await Post.findAll({ 
+            where: { UserId: req.params.id }, 
+            include: [
+                {
+                    model: User,
+                    attributes: ['id', 'nick'],
+                },
+                {
+                    model: User,
+                    attributes: ['id', 'nick'],
+                    as: 'Likers',
+                }],
+            order: [['createdAt', 'DESC']] });
+        console.log(posts);
+        console.log(user.nick);
+        res.render('main', {
+            title: `${user.nick} | NodeBird`,
+            twits: posts,
+            likes: posts.map((v) => v.Likers.map((v) => v.id)) || [],
         });
     } catch (error) {
         console.error(error);

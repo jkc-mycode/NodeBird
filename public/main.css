@@ -100,7 +100,21 @@ input[type='text'], input[type='email'], input[type='password'], textarea {
   position: relative;
   margin-bottom: 10px;
 }
-.twit-author { display: inline-block; font-weight: bold; margin-right: 10px; }
+.twit-author { 
+  font-weight: bold; 
+  font-size: 16px;
+  margin-right: 10px; 
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+}
+.twit-author:hover {
+  opacity: 0.5;
+}
+.twit-author:active {
+  opacity: 0.5;
+}
 .twit-follow, .twit-unfollow {
   padding: 1px 5px;
   background: #fff;
@@ -110,8 +124,11 @@ input[type='text'], input[type='email'], input[type='password'], textarea {
   font-size: 12px;
   cursor: pointer;
 }
+.twit-content {
+  margin: 10px 0px;
+}
 .twit-img { text-align: center; }
-.twit-img img { max-width: 75%; }
+.twit-img img { max-width: 75%; margin-bottom: 10px; }
 .error-message { color: red; font-weight: bold; }
 #search-form { text-align: right; }
 #join-form { padding: 10px; text-align: center; }
