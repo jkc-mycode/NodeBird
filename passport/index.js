@@ -3,6 +3,8 @@ const local = require('./localStrategy');
 const kakao = require('./kakaoStrategy');
 const User = require('../models/user');
 const Post = require('../models/post');
+const { createUserCache } = require('../middlewares/index');
+const userCache = createUserCache();
 
 
 module.exports = () => {
@@ -19,6 +21,11 @@ module.exports = () => {
     // passport.session 미들웨어가 passport.deserializeUser 메서드를 호출
     // 결과적으로 req.user를 만드는 곳임
     passport.deserializeUser((id, done) => {  // 세션쿠키 값을 통해 얻은 유저 아이디를 가지고 User 정보를 복원시킴
+        if (Object.keys(userCache.getUserCache()).length !== 0 && userCache.getCacheTTL() > Date.now()){
+            console.log('Cache: ', userCache.getCacheTTL, Date.now());
+            return done(null, userCache.getUserCache());
+        }
+        
         User.findOne({ 
             where: { id },
             // as: 'Followers'와 as: 'Followings'는 User 모델이 Follow 테이블을 통해 
@@ -40,8 +47,12 @@ module.exports = () => {
                     as: 'LikedPosts',
                 },
             ]
-        })
-            .then((user) => done(null, user))  // 그 복원된(조회된) 정보가 req.user가 됨
+        })  // 그 복원된(조회된) 정보가 req.user가 됨
+            .then((user) => {
+                done(null, user);
+                userCache.setUserCache(user.id);
+                userCache.setCacheTTL(Date.now());
+            })  
             .catch(err => done(err));
     });
 

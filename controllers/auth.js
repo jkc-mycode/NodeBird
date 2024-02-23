@@ -1,6 +1,8 @@
 const User = require('../models/user');
 const bcrypt = require('bcrypt');
 const passport = require('passport');
+const { createUserCache } = require('../middlewares/index');
+const userCache = createUserCache();
 
 exports.join = async (req, res, next) => {
     const { nick, email, password } = req.body;  // 구조분해 할당에 의해 req.body에서 자동으로 할당됨
@@ -53,6 +55,7 @@ exports.login = (req, res, next) => {
 // passport.deserializeUser 메서드를 실행할 수 없음
 exports.logout = (req, res, next) => {  
     req.logout(() => {
+        userCache.setUserCache(-1);
         res.redirect('/');
     });
 };

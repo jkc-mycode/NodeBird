@@ -3,6 +3,9 @@ const Post = require('../models/post');
 const User = require('../models/user');
 const Hashtag = require('../models/hashtag');
 const bcrypt = require('bcrypt');
+const { createUserCache } = require('../middlewares/index');
+const userCache = createUserCache();
+
 
 exports.renderProfile = (req, res, next) => {
     // 서비스를 호출
@@ -32,6 +35,7 @@ exports.updateProfile = async (req, res, next) => {
         }, {
             where: { id: req.user.id }
         });
+        userCache.setUserCache(req.user.id);
         return res.redirect('/');
     } catch(err) {
         console.log(err);
@@ -46,6 +50,7 @@ exports.renderJoin = (req, res, next) => {
 
 exports.renderMain = async (req, res, next) => {
     try {
+        // console.log("Current User: ", userCache.getUserCache());
         const posts = await Post.findAll({
             include: [
                 {
@@ -59,7 +64,6 @@ exports.renderMain = async (req, res, next) => {
                 }],
             order: [['createdAt', 'DESC']]
         });
-        console.log(posts.map(v => v.Likers.map(v => v.id)));
         res.render('main', { 
             title: 'NodeBird',
             twits: posts,

@@ -1,6 +1,8 @@
 const Post = require('../models/post');
 const User = require('../models/user');
 const Hashtag = require('../models/hashtag');
+const { createUserCache } = require('../middlewares/index');
+const userCache = createUserCache();
 
 // 업로드한 이미지의 url를 프론트로 보내는 곳 (미리보기 때문에)
 exports.afterUploadImage = (req, res) => {
@@ -70,6 +72,7 @@ exports.likePost = async (req, res, next) => {
         const post = await Post.findOne({ where: { id: req.params.id } });
         if (post) {
             await post.addLiker(parseInt(req.user.id, 10));
+            userCache.setUserCache(req.user.id);
             res.send('success');
         } else {
             res.status(404).send('no user');
@@ -85,6 +88,7 @@ exports.unlikePost = async (req, res, next) => {
         const post = await Post.findOne({ where: { id: req.params.id } });
         if (post) {
             await post.removeLiker(parseInt(req.user.id, 10));
+            userCache.setUserCache(req.user.id);
             res.send('success');
         }
     } catch (error) {
